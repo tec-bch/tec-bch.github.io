@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Trauma Excellent Center | ศูนย์ความเป็นเลิศด้านอุบัติเหตุ</title>
+  <meta name="description" content="ศูนย์ความเป็นเลิศด้านอุบัติเหตุ โรงพยาบาลพุทธชินราช พิษณุโลก · ความรู้สำหรับประชาชน ผู้ป่วยและญาติ · สายด่วน 1669">
+  <meta name="theme-color" content="#27367A">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <!-- preview card when the link is shared on LINE / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Trauma Excellent Center | ศูนย์ความเป็นเลิศด้านอุบัติเหตุ">
+  <meta property="og:description" content="โรงพยาบาลพุทธชินราช พิษณุโลก · ความรู้และการดูแลผู้บาดเจ็บ ตั้งแต่จุดเกิดเหตุจนถึงหลังกลับบ้าน">
+  <!-- หลังเปิดใช้ GitHub Pages ให้เปลี่ยนเป็นลิงก์เต็ม เช่น https://ชื่อบัญชี.github.io/share.jpg -->
+  <meta property="og:image" content="share.jpg">
+  <style>
+    html, body { margin: 0; height: 100%; background: #F2F5FC; overflow: hidden; }
+    iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+    .loading { position: fixed; inset: 0; display: grid; place-items: center; font: 16px system-ui, sans-serif; color: #5B6683; }
+    .loading i { width: 38px; height: 38px; border-radius: 50%; border: 4px solid #DDE3FA; border-top-color: #27367A; animation: s 1s linear infinite; margin: 0 auto 12px; display: block; }
+    @keyframes s { to { transform: rotate(360deg) } }
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading"><div><i></i>กำลังเปิดเว็บไซต์…</div></div>
+  <iframe id="app" title="Trauma Excellent Center" allow="clipboard-write; fullscreen"></iframe>
+  <noscript><p style="padding:20px">เปิดเว็บไซต์: <a href="https://script.google.com/macros/s/AKfycby5au3Ys2RoldmksiIauv1-rZ3Ztjsgoum08p_McUTncA7601P7rzGlaPA-qtJ7TSjr/exec">Trauma Excellent Center</a></p></noscript>
+  <script>
+    // ลิงก์เว็บ TEC (Apps Script /exec) — ถ้าเปลี่ยน deployment ให้แก้บรรทัดนี้บรรทัดเดียว
+    var APP_URL = 'https://script.google.com/macros/s/AKfycby5au3Ys2RoldmksiIauv1-rZ3Ztjsgoum08p_McUTncA7601P7rzGlaPA-qtJ7TSjr/exec';
+
+    var frame = document.getElementById('app');
+    // pass ?page=…&id=… through, so links like tec-bch.github.io/?page=care&id=abdomen open that page
+    frame.src = APP_URL + (location.search || '');
+    frame.onload = function () { var l = document.getElementById('loading'); if (l) l.remove(); };
+
+    function qs(page, id) {
+      if (!page || page === 'home') return location.pathname;
+      return location.pathname + '?page=' + encodeURIComponent(page) + (id ? '&id=' + encodeURIComponent(id) : '');
+    }
+    function current() {
+      var p = new URLSearchParams(location.search);
+      return { page: p.get('page') || 'home', id: p.get('id') || '' };
+    }
+    var first = true;
+    // the site tells us which page it is showing → keep the address bar in sync
+    window.addEventListener('message', function (ev) {
+      var d = ev.data || {};
+      if (d.tec !== 'route' || !/\.googleusercontent\.com$|script\.google\.com$/.test(new URL(ev.origin).hostname)) return;
+      var c = current();
+      if (c.page !== (d.page || 'home') || c.id !== (d.id || '')) history[first ? 'replaceState' : 'pushState'](null, '', qs(d.page, d.id));
+      first = false;
+    });
+    // browser back / forward → tell the site to switch page
+    function broadcast(win, msg, depth) {
+      try { win.postMessage(msg, '*'); } catch (e) {}
+      if (depth > 3) return;
+      try { for (var i = 0; i < win.frames.length; i++) broadcast(win.frames[i], msg, depth + 1); } catch (e) {}
+    }
+    window.addEventListener('popstate', function () {
+      var c = current();
+      broadcast(frame.contentWindow, { tec: 'go', page: c.page, id: c.id }, 0);
+    });
+  </script>
+</body>
+</html>
